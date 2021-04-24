@@ -6,117 +6,53 @@
 <title>Nasciturus</title>
 <link rel="stylesheet" href="estilos.css">
 <link rel="preconnect" href="https://fonts.gstatic.com">
-<link href="https://fonts.googleapis.com/css2?family=Amatic+SC&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
+<header>
+<img id="logo" src="/img/logo.png">
 <h1>Nasciturus</h1>
+</header>
 <div id="entradas">
-<article class="cursiva">
-<h2>Xto. Yacente</h2>
-
-<p>Algunos botarates cambiaron<br>
-decisiones "espontáneamente",<br>
-favoreciendo genocidios hirientes,<br>
-inhumanos.<br>
-Jornadas "kilométricas"<br>
-languidecieron, mientras nuestras<br>
-ñañas obstaculizaban percibir,<br>
-quiénes realmente "sembraban"<br>
-terror; ultrajándote vía web, Xto.<br>
-yacente, zaminado</p>
-
-<p>Hernán G.C.</p>
-</article>
-
-<article class="cursiva">
-<h2>Trentuno</h2>
-
-<p>Tres truhanes traman<br>
-tropelías tribales.</p>
-
-<p>Triunfan traicionando tropa,<br>
-truncando trebejos.</p>
-
-<p>Tremendos trucos,<br>
-trascienden tribulaciones troncales.</p>
-
-<p>Trágica truculencia,<br>
-tropiezo triste, trepidante.</p>
-
-<p>Truenen trompetas,<br>
-trajinando tribunales "trepanados".</p>
-
-<p>Tributen, tremolando transparencia,<br>
-troceado trué.</p>
-
-<p>Hernán G.C.</p>
-</article>
-
-<article class="cursiva">
-<h2>Veintisiete vocablos</h2>
-
-<p>Vanidosos verdugos violentos,<br>
-vociferan vulgaridades.<br>
-Voraces, vulnerarán vidas,<br>
-vertiendo vacuidad.</p>
-
-<p>Vuelan, vacilantes voces,<br>
-velando virtudes.<br>
-Versátiles voluntades,<br>
-"vuelcan" valores "vintage".</p>
-
-<p>Volverás, Verdad vigente,<br>
-valerosa Vuecencia.</p>
-
-<p>Hernán G.C.</p>
-</article>
-
-<article class="cursiva">
-<h2>Cabalga, SARS</h2>
-
-<p>Darán a las masas,<br>
-plan tras plan.<br>
-Armarán farsas,<br>
-avaladas.<br>
-Falsas "baladas",<br>
-atraparán a las mamás.<br>
-Saldrán dañadas.<br>
-Batallarán,<br>
-las mansas.<br>
-Arrancarán almas sagradas.<br>
-Sangrará la Santa Faz.<br>
-Cabalga SARS,<br>
-ancas blancas.<br>
-A la par, las armas,<br>
-la Carpanta.<br>
-La Parca alza la daga.<br>
-La vasta maldad avanza.<br>
-Nada más falta ya.<br>
-Basta amar.</p>
-
-<p>Hernán G.C.</p>
-</article>
-
-<article class="cursiva">
-<h2>Ser Celeste</h2>
-
-<p>Es menester defenderte, presente<br>
-pequeñez, del verde mequetrefe.<br>
-Perderte, estremece. Es perecer.<br>
-Verte, enternece.<br>
-Es entender.<br>
-Es quererte.<br>
-Que te esperen tres veces tres<br>
-meses, recé.<br>
-Eres ese ser celeste que crece per se.<br>
-Desde Belén, el que Es, te ve.<br>
-Mereces ser, bebé.<br>
-Te meceré.<br>
-Ten Fe.</p>
-
-<p>Hernán G.C.</p>
-</article>
 </div>
+<script>
+$.get( "https://docs.google.com/spreadsheets/d/1GyrAylOXuLyXxLpG59WzHgUsRiA6vvmb9wvxorY-24s/export?format=csv", function( data ) {
+    data = data.split(/(?:,|\n|^)("(?:(?:"")*[^"]*)*"|[^",\n]*|(?:\n|$))/);
+    for (i=0; i<data.length; i++) {
+      if (data[i] == "") {
+        data.splice(i,1);
+      }
+    }
+    for (i=0; i<data.length; i++) {
+      data[i] = data[i].replace(/\"/g,"");
+      data[i] = data[i].replace(/\n/g,"<br>");
+    }
+    data.splice(0,3);
+
+    var entradas = new Array();
+    entradas[0] = new Array(data[0], data[1], data[2]);
+    for (i=3; i<data.length; i++) {
+      if (data[i] == "\r") {
+        entradas[entradas.length] = new Array (data[i+1], data[i+2], data[i+3]);
+      }
+    }
+
+    entradas = entradas.reverse();
+
+    var html = "";
+
+    for (i=0; i<entradas.length; i++) {
+      html += "<article class='cursiva'><h2>";
+      html += entradas[i][1];
+      html += "</h2><p>";
+      html += entradas[i][2];
+      html += "</p></article>";
+    }
+
+    $("#entradas").append(html);
+});
+</script>
 </body>
 </html>
