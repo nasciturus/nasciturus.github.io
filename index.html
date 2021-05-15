@@ -11,48 +11,122 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
-<header>
-<img id="logo" src="/img/logo.png">
 <h1>Nasciturus</h1>
-</header>
-<div id="entradas">
-</div>
+<div id="entradas"></div>
 <script>
-$.get( "https://docs.google.com/spreadsheets/d/1GyrAylOXuLyXxLpG59WzHgUsRiA6vvmb9wvxorY-24s/export?format=csv", function( data ) {
-    data = data.split(/(?:,|\n|^)("(?:(?:"")*[^"]*)*"|[^",\n]*|(?:\n|$))/);
-    for (i=0; i<data.length; i++) {
-      if (data[i] == "") {
-        data.splice(i,1);
-      }
+$.get("https://docs.google.com/spreadsheets/d/1vFSxijCIorI5R7O29WWfGenX7DXkLeW_HOuLap30xCU/export?format=csv", function(csv) {
+
+  entradas = csvToMatrix(csv);
+  entradas = darFormato(entradas);
+
+  var entradasConFecha = new Array();
+  var entradasSinFecha = new Array();
+
+  for (i=0; i<entradas.length; i++) {
+    if (entradas[i][3].length == 3) {
+      entradasConFecha.push(entradas[i]);
+    } else {
+      entradasSinFecha.push(entradas[i]);
     }
-    for (i=0; i<data.length; i++) {
-      data[i] = data[i].replace(/\"/g,"");
-      data[i] = data[i].replace(/\n/g,"<br>");
+  }
+
+  entradasConFecha = bucketSort(entradasConFecha);
+
+  for (i=entradasConFecha.length-1; i>=0; i--) {
+    if (entradasConFecha[i] != null) {
+      html = crearTarjeta(entradasConFecha[i]);
+      $("#entradas").append(html);
     }
-    data.splice(0,3);
+  }
 
-    var entradas = new Array();
-    entradas[0] = new Array(data[0], data[1], data[2]);
-    for (i=3; i<data.length; i++) {
-      if (data[i] == "\r") {
-        entradas[entradas.length] = new Array (data[i+1], data[i+2], data[i+3]);
-      }
-    }
-
-    entradas = entradas.reverse();
-
-    var html = "";
-
-    for (i=0; i<entradas.length; i++) {
-      html += "<article class='cursiva'><h2>";
-      html += entradas[i][1];
-      html += "</h2><p>";
-      html += entradas[i][2];
-      html += "</p></article>";
-    }
-
+  for (i=entradasSinFecha.length-1; i>=0; i--) {
+    html = crearTarjeta(entradasSinFecha[i]);
     $("#entradas").append(html);
+  }
+
 });
+</script>
+<script>
+function csvToMatrix(csv) {
+  matrix = csv.split(/\r/);
+  matrix.splice(0,1);
+
+  for (i=0; i<matrix.length; i++) {
+    matrix[i] = matrix[i].split("");
+    esSeparador = true;
+
+    for (j=0; j<matrix[i].length; j++) {
+      if (matrix[i][j] == '"') {
+        esSeparador = !esSeparador;
+      }
+      if ((matrix[i][j] == ',') && esSeparador) {
+        matrix[i][j] = '|';
+      }
+    }
+
+    matrix[i] = matrix[i].join("");
+    matrix[i] = matrix[i].split("|");
+  }
+
+  return matrix;
+}
+
+function darFormato(entradas) {
+  for (i=0; i<matrix.length; i++) {
+    entradas[i][1] = borrarComillasExtra(entradas[i][1]);
+    entradas[i][2] = borrarComillasExtra(entradas[i][2]);
+    
+    entradas[i][3] = entradas[i][3].split("/");
+    for (j=0; j<entradas[i][3].length; j++) {
+      entradas[i][3][j] = parseInt([entradas[i][3][j]]);
+    }
+  }
+
+  return entradas;
+}
+
+function borrarComillasExtra(string) {
+  string = string.replace(/""/g, ';');
+  string = string.replace(/"/g, '');
+  string = string.replace(/;/g, '"');
+
+  return string;
+}
+
+function bucketSort(entradas) {
+  var enOrden = new Array();
+
+  for (i=0; i<entradas.length; i++) {
+    pos = (entradas[i][3][2] - 2020)*366 + entradas[i][3][1]*31 + entradas[i][3][0];
+    enOrden[pos] = entradas[i];
+  }
+
+  return enOrden;
+}
+
+function crearTarjeta(entrada) {
+  var html = "";
+  html += "<article><h2>";
+  html += entrada[1];
+  html += "</h2><p>";
+  var texto = entrada[2].replace(/\n\n/g, "</p><p>");
+  texto = texto.replace(/\n/g, "<br>");
+  html += texto;
+  html += "</p>";
+
+  if (entrada[3].length == 3) {
+    html += "<time>";
+    html += entrada[3][0];
+    html += "/";
+    html += entrada[3][1];
+    html += "/";
+    html += entrada[3][2];
+  }
+
+  html += "</article>";
+
+  return html;
+}
 </script>
 </body>
 </html>
