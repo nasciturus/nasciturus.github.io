@@ -98,6 +98,9 @@ function bucketSort(entradas) {
 
   for (i=0; i<entradas.length; i++) {
     pos = (entradas[i][3][2] - 2020)*366 + entradas[i][3][1]*31 + entradas[i][3][0];
+    while (enOrden[pos] != null) {
+      pos = pos + 1;
+    }
     enOrden[pos] = entradas[i];
   }
 
