@@ -84,7 +84,7 @@ function darFormato(entradas) {
   for (i=0; i<matrix.length; i++) {
     entradas[i][1] = borrarComillasExtra(entradas[i][1]);
     entradas[i][2] = borrarComillasExtra(entradas[i][2]);
-    
+    entradas[i][2] = espaciosHorizontales(entradas[i][2]);
     entradas[i][3] = entradas[i][3].split("/");
     for (j=0; j<entradas[i][3].length; j++) {
       entradas[i][3][j] = parseInt([entradas[i][3][j]]);
@@ -98,6 +98,12 @@ function borrarComillasExtra(string) {
   string = string.replace(/""/g, ';');
   string = string.replace(/"/g, '');
   string = string.replace(/;/g, '"');
+
+  return string;
+}
+
+function espaciosHorizontales(string) {
+  string = string.replace(/  /g, '&nbsp;&nbsp;');
 
   return string;
 }
