@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com">
 <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" integrity="sha512-5A8nwdMOWrSz20fDsjczgUidUBR8liPYU+WymTZP1lmY9G6Oc7HlZv156XqnsgNUzTyMefFTcsFH/tnJE/+xBg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-YWMN1794X9"></script>
@@ -23,10 +24,12 @@
 <h1>Nasciturus</h1>
 <div id="entradas"></div>
 <script>
-$.get("https://docs.google.com/spreadsheets/d/1vFSxijCIorI5R7O29WWfGenX7DXkLeW_HOuLap30xCU/export?format=csv", function(csv) {
+$.get("https://docs.google.com/spreadsheets/d/1Mkei43BmTIdNFru9c86-YobLlJAQPzF-_ykZLPS4vP0/export?format=csv", function(csv) {
 
   entradas = csvToMatrix(csv);
   entradas = darFormato(entradas);
+
+  console.log(entradas);
 
   var entradasConFecha = new Array();
   var entradasSinFecha = new Array();
@@ -89,6 +92,9 @@ function darFormato(entradas) {
     for (j=0; j<entradas[i][3].length; j++) {
       entradas[i][3][j] = parseInt([entradas[i][3][j]]);
     }
+    if (entradas[i][4].length > 1) {
+      entradas[i][4] = convertirLinkDeAudio(entradas[i][4]);
+    }
   }
 
   return entradas;
@@ -122,6 +128,18 @@ function bucketSort(entradas) {
   return enOrden;
 }
 
+function convertirLinkDeAudio(link) {
+  var id = extraerID(link);
+  var linkReproducible = "https://docs.google.com/uc?export=download&id=".concat(id);
+  return linkReproducible;
+}
+
+function extraerID(link) {
+  var pos = link.search("id=");
+  var id = link.substring(pos+3);
+  return id;
+}
+
 function crearTarjeta(entrada) {
   var html = "";
   html += "<article><h2>";
@@ -132,6 +150,23 @@ function crearTarjeta(entrada) {
   html += texto;
   html += "</p>";
 
+  if (entrada[4].length > 1) {
+    var linkDeAudio = entrada[4];
+    console.log(entrada[4]);
+    var id = extraerID(entrada[4]);
+    html += "<audio id='";
+    html += id;
+    html += "'><source src='";
+    html += entrada[4];
+    html += "'></audio>";
+    html += "<ul class='reproductor'><ul><li><a onclick='document.getElementById(&quot;";
+    html += id;
+    html += "&quot;).play()'><i class='fa fa-play' aria-hidden='true'></i>&nbsp;&nbsp;Escuchar poema</a></li>";
+    html += "<li><a onclick='document.getElementById(&quot;";
+    html += id;
+    html += "&quot;).pause()'><i class='fa fa-pause' aria-hidden='true'></i>&nbsp;&nbsp;Pausar audio</a></li></ul>";
+  }
+
   if (entrada[3].length == 3) {
     html += "<time>";
     html += entrada[3][0];
@@ -139,6 +174,7 @@ function crearTarjeta(entrada) {
     html += entrada[3][1];
     html += "/";
     html += entrada[3][2];
+    html += "</time>"
   }
 
   html += "</article>";
