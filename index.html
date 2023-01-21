@@ -159,9 +159,9 @@ function crearTarjeta(entrada) {
     html += "'><source src='";
     html += entrada[4];
     html += "'></audio>";
-    html += "<ul class='reproductor'><ul><li><a onclick='document.getElementById(&quot;";
+    html += "<ul class='reproductor'><ul><li><a onclick='reproducirAudio(document.getElementById(&quot;";
     html += id;
-    html += "&quot;).play()'><i class='fa fa-play' aria-hidden='true'></i>&nbsp;&nbsp;Escuchar poema</a></li>";
+    html += "&quot;))'><i class='fa fa-play' aria-hidden='true'></i>&nbsp;&nbsp;Escuchar poema</a></li>";
     html += "<li><a onclick='document.getElementById(&quot;";
     html += id;
     html += "&quot;).pause()'><i class='fa fa-pause' aria-hidden='true'></i>&nbsp;&nbsp;Pausar audio</a></li></ul>";
@@ -180,6 +180,11 @@ function crearTarjeta(entrada) {
   html += "</article>";
 
   return html;
+}
+</script>
+<script>
+function reproducirAudio(audio) {
+  audio.play();
 }
 </script>
 </body>
